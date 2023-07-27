@@ -20,11 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
 from pythoneda.primary_port import PrimaryPort
-from pythoneda.realm.rydnr.events.commit_staged_changes_request_delegated import (
-    CommitStagedChangesRequestDelegated,
-)
+from pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated import StagedChangesCommitRequestDelegated
 import sys
-
 
 class DelegateCommitStagedChangesRequestCli(PrimaryPort):
 
@@ -38,7 +35,7 @@ class DelegateCommitStagedChangesRequestCli(PrimaryPort):
 
     Collaborators:
         - PythonEDA subclasses: They are notified back with the information retrieved from the command line.
-        - pythoneda.realm.rydnr.events.commit_staged_changes_request_delegated.CommitStagedChangesRequestDelegated
+        - pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated.StagedChangesCommitRequestDelegated
     """
 
     def priority(self) -> int:
@@ -76,9 +73,9 @@ class DelegateCommitStagedChangesRequestCli(PrimaryPort):
                 print(f"-r|--repository-folder is mandatory")
                 sys.exit(1)
             if args.message and args.repository_folder:
-                print(f"Sending CommitStagedChangesRequestDelegated to rydnr")
+                print(f"Sending StagedChangesCommitRequestDelegated to rydnr")
                 await app.accept(
-                    CommitStagedChangesRequestDelegated(
+                    StagedChangesCommitRequestDelegated(
                         args.message, args.repository_folder
                     )
                 )

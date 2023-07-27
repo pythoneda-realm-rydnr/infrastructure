@@ -20,9 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType
 from pythoneda.event import Event
-from pythoneda.shared.artifact_changes.events.commit_staged_changes_requested import CommitStagedChangesRequested
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus.dbus_change_staging_requested import DbusCommitStagedChangesRequested
 from pythoneda.infrastructure.dbus.dbus_signal_emitter import DbusSignalEmitter
+from pythoneda.shared.artifact_changes.events.staged_changes_commit_requested import StagedChangesCommitRequested
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus.dbus_staged_changes_commit_requested import DbusStagedChangesCommitRequested
 from typing import Dict
 
 class RydnrDbusSignalEmitter(DbusSignalEmitter):
@@ -57,12 +57,12 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
         :rtype: Dict
         """
         result = {}
-        key = self.fqdn_key(CommitStagedChangesRequested)
+        key = self.fqdn_key(StagedChangesCommitRequested)
         result[key] = {
-                "interface": DbusCommitStagedChangesRequested,
+                "interface": DbusStagedChangesCommitRequested,
                 "busType": BusType.SYSTEM,
-                "transformer": DbusCommitStagedChangesRequested.transform_CommitStagedChangesRequested,
-                "signature": DbusCommitStagedChangesRequested.signature_for_CommitStagedChangesRequested
+                "transformer": DbusStagedChangesCommitRequested.transform_StagedChangesCommitRequested,
+                "signature": DbusStagedChangesCommitRequested.signature_for_StagedChangesCommitRequested
             }
 
         return result

@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType, Message
 from pythoneda.event import Event
-from pythoneda.shared.artifact_changes.events.commit_staged_changes_request_delegated import CommitStagedChangesRequestDelegated
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus.dbus_commit_staged_changes_requestDelegated import DbusCommitStagedChangesRequestDelegated
+from pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated import StagedChangesCommitRequestDelegated
+from pythoneda.realm.rydnr.events.infrastructure.dbus.dbus_staged_changes_commit_request_delegated import DbusStagedChangesCommitRequestDelegated
 from pythoneda.infrastructure.dbus.dbus_signal_listener import DbusSignalListener
 from typing import Dict
 
@@ -38,7 +38,7 @@ class RydnrDbusSignalListener(DbusSignalListener):
 
     Collaborators:
         - pythoneda.application.pythoneda.PythonEDA: Receives relevant domain events.
-        - pythoneda.artifact_changes.events.infrastructure.dbus.dbus_commit_staged_changes_requested.DbusCommitStagedChangesRequested
+        - pythoneda.artifact_changes.events.infrastructure.dbus.dbus_staged_changes_commit_request_delegated.DbusStagedChangesCommitRequestDelegated
     """
 
     def __init__(self):
@@ -56,26 +56,26 @@ class RydnrDbusSignalListener(DbusSignalListener):
         :rtype: Dict
         """
         result = {}
-        key = self.fqdn_key(CommitStagedChangesRequested)
+        key = self.fqdn_key(StagedChangesCommitRequestDelegated)
         result[key] = [
-            DbusCommitStagedChangesRequested, BusType.SYSTEM
+            DbusStagedChangesCommitRequestDelegated, BusType.SYSTEM
         ]
         return result
 
-    def parse_pythonedarealmrydnr_CommitStagedChangesRequestDelegated(self, message: Message) -> CommitStagedChangesRequestDelegated:
+    def parse_pythonedarealmrydnr_StagedChangesCommitRequestDelegated(self, message: Message) -> StagedChangesCommitRequestDelegated:
         """
-        Parses given d-bus message containing a CommitStagedChangesRequested event.
+        Parses given d-bus message containing a StagedChangesCommitRequestDelegated event.
         :param message: The message.
         :type message: dbus_next.Message
-        :return: The CommitStagedChangesRequestDelegated event.
-        :rtype: pythoneda.realm.rydnr.events.commit_staged_changes_request_delegated.CommitStagedChangesRequestDelegated
+        :return: The StagedChangesCommitRequestDelegated event.
+        :rtype: pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated.StagedChangesCommitRequestDelegated
         """
-        return DbusCommitStagedChangesRequestDelegated.parse_pythonedarealmrydnr_CommitStagedChangesRequestDelegated(message)
+        return DbusStagedChangesCommitRequestDelegated.parse_pythonedarealmrydnr_StagedChangesCommitRequestDelegated(message)
 
-    async def listen_pythonedarealmrydnr_CommitStagedChangesRequestDelegated(self, event: CommitStagedChangesRequestDelegated):
+    async def listen_pythonedarealmrydnr_StagedChangesCommitRequestDelegated(self, event: StagedChangesCommitRequestDelegated):
         """
         Gets notified when a signal for a TagCredentialsRequested event occurs.
         :param event: The event.
-        :rtype: pythoneda.realm.rydnr.events.commit_staged_changes_request_delegated.CommitStagedChangesRequestDelegated
+        :rtype: pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated.StagedChangesCommitRequestDelegated
         """
         await self.app.accept(event)
