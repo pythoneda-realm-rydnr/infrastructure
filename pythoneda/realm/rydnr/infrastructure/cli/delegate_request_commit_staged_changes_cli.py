@@ -52,7 +52,7 @@ class DelegateCommitStagedChangesRequestCli(PrimaryPort):
         )
         parser.add_argument(
             "command",
-            choices=["stage", "commit"],
+            choices=["stage", "commit", "jupyter"],
             nargs="?",
             default=None,
             help="Whether to stage or commit changes",
