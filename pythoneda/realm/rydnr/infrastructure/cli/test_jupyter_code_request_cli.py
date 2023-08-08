@@ -22,10 +22,8 @@ import argparse
 import asyncio
 import os
 from pathlib import Path
-from pythoneda.shared.code_requests.jupyter.jupyter_code_request import (
-    JupyterCodeRequest,
-)
-from pythoneda.primary_port import PrimaryPort
+from pythoneda import PrimaryPort
+from pythoneda.shared.code_requests.jupyter import JupyterCodeRequest
 import shutil
 import subprocess
 import sys
@@ -42,7 +40,7 @@ class TestJupyterRequestCli(PrimaryPort):
         - Parse the command-line to test Jupyter requests.
 
     Collaborators:
-        - pythoneda.shared.code_requests.jupyter.jupyter_code_request.JupyterCodeRequest
+        - pythoneda.shared.code_requests.jupyter.JupyterCodeRequest
     """
 
     def priority(self) -> int:
@@ -54,11 +52,10 @@ class TestJupyterRequestCli(PrimaryPort):
         :param app: The PythonEDA instance.
         :type app: PythonEDA
         """
-        print(f'In test_jupyter_code_request_cli.py')
         parser = argparse.ArgumentParser(description="Test a Jupyter request")
         parser.add_argument(
             "command",
-            choices=["jupyter"],
+            choices=["stage", "jupyter"],
             nargs="?",
             default=None,
             help="Test a Jupyter request",
@@ -73,7 +70,12 @@ class TestJupyterRequestCli(PrimaryPort):
 
     async def run_flake(self, tempFolder):
         jupyter_code_request = JupyterCodeRequest()
-        jupyter_code_request.append("print('Hello, World!')")
+        jupyter_code_request.append_markdown("## Importing modules")
+        jupyter_code_request.append_markdown("Importing pythoneda")
+        jupyter_code_request.append_code("from pythoneda.value_object import ValueObject")
+        jupyter_code_request.append_markdown("## Running the code")
+        jupyter_code_request.append_markdown("Running hello world")
+        jupyter_code_request.append_code("print('Hello, World!')", Dependency("pythoneda-shared-pythoneda-domain", "0.0.1a30", "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a30?dir=domain"))
         # create a flake in a temporary folder
         shutil.copy(Path(os.getcwd()) / ".." / "application" / "flake.nix", Path(tempFolder) / "flake.nix")
         shutil.copy(Path(os.getcwd()) / ".." / "application" / "pyprojecttoml.template", Path(tempFolder) / "pyprojecttoml.template")

@@ -20,9 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType, Message
 from pythoneda.event import Event
-from pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated import StagedChangesCommitRequestDelegated
-from pythoneda.realm.rydnr.events.infrastructure.dbus.dbus_staged_changes_commit_request_delegated import DbusStagedChangesCommitRequestDelegated
-from pythoneda.infrastructure.dbus.dbus_signal_listener import DbusSignalListener
+from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
+from pythoneda.realm.rydnr.events.infrastructure.dbus import DbusChangeStagingCodeRequestDelegated
+from pythoneda.infrastructure.dbus import DbusSignalListener
 from typing import Dict
 
 class RydnrDbusSignalListener(DbusSignalListener):
@@ -38,7 +38,7 @@ class RydnrDbusSignalListener(DbusSignalListener):
 
     Collaborators:
         - pythoneda.application.pythoneda.PythonEDA: Receives relevant domain events.
-        - pythoneda.artifact_changes.events.infrastructure.dbus.dbus_staged_changes_commit_request_delegated.DbusStagedChangesCommitRequestDelegated
+        - pythoneda.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeRequestDelegated
     """
 
     def __init__(self):
@@ -51,31 +51,21 @@ class RydnrDbusSignalListener(DbusSignalListener):
         """
         Retrieves the configured signal receivers.
         :param app: The PythonEDA instance.
-        :type app: pythoneda.application.pythoneda.PythonEDA
+        :type app: pythoneda.application.PythonEDA
         :return: A dictionary with the signal name as key, and the tuple interface and bus type as the value.
         :rtype: Dict
         """
         result = {}
-        key = self.fqdn_key(StagedChangesCommitRequestDelegated)
+        key = self.fqdn_key(ChangeStagingCodeRequestDelegated)
         result[key] = [
-            DbusStagedChangesCommitRequestDelegated, BusType.SYSTEM
+            DbusChangeStagingCodeRequestDelegated, BusType.SYSTEM
         ]
         return result
 
-    def parse_pythonedarealmrydnr_StagedChangesCommitRequestDelegated(self, message: Message) -> StagedChangesCommitRequestDelegated:
+    def event_package(self):
         """
-        Parses given d-bus message containing a StagedChangesCommitRequestDelegated event.
-        :param message: The message.
-        :type message: dbus_next.Message
-        :return: The StagedChangesCommitRequestDelegated event.
-        :rtype: pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated.StagedChangesCommitRequestDelegated
+        Retrieves the event package.
+        :return: The package.
+        :rtype: str
         """
-        return DbusStagedChangesCommitRequestDelegated.parse_pythonedarealmrydnr_StagedChangesCommitRequestDelegated(message)
-
-    async def listen_pythonedarealmrydnr_StagedChangesCommitRequestDelegated(self, event: StagedChangesCommitRequestDelegated):
-        """
-        Gets notified when a signal for a TagCredentialsRequested event occurs.
-        :param event: The event.
-        :rtype: pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated.StagedChangesCommitRequestDelegated
-        """
-        await self.app.accept(event)
+        return "pythoneda.realm.rydnr.events"

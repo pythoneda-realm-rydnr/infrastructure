@@ -1,7 +1,7 @@
 """
-pythoneda/realm/rydnr/infrastructure/cli/delegate_request_commit_staged_changes_cli.py
+pythoneda/realm/rydnr/infrastructure/cli/change_staging_code_request_delegated_cli.py
 
-This file defines the DelegateRequestCommitStagedChangesCli.
+This file defines the ChangeStagingCodeRequestDelegatedCli.
 
 Copyright (C) 2023-today rydnr's pythoneda-realm-rydnr/infrastructure
 
@@ -19,27 +19,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
-from pythoneda.primary_port import PrimaryPort
-from pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated import StagedChangesCommitRequestDelegated
+from pythoneda import PrimaryPort
+from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
 import sys
 
-class DelegateCommitStagedChangesRequestCli(PrimaryPort):
+class ChangeStagingCodeRequestDelegatedCli(PrimaryPort):
 
     """
-    A PrimaryPort that makes Rydnr delegate the request to commit staged changes.
+    A PrimaryPort that makes Rydnr request code to perform the staging of some changes.
 
-    Class name: DelegateCommitStagedChangesRequestCli
+    Class name: ChangeStagingCodeRequestDelegatedCli
 
     Responsibilities:
-        - Parse the command-line to retrieve the information needed to delegate requests to commit staged changes.
+        - Parse the command-line to retrieve the information needed to request code to stage changes.
 
     Collaborators:
         - PythonEDA subclasses: They are notified back with the information retrieved from the command line.
-        - pythoneda.realm.rydnr.events.staged_changes_commit_request_delegated.StagedChangesCommitRequestDelegated
+        - pythoneda.realm.rydnr.events.change_staging_code_request_delegated.ChangeStagingCodeRequestDelegated
     """
-
-    def priority(self) -> int:
-        return 100
 
     async def accept(self, app):
         """
@@ -47,35 +44,25 @@ class DelegateCommitStagedChangesRequestCli(PrimaryPort):
         :param app: The PythonEDA instance.
         :type app: PythonEDA
         """
-        parser = argparse.ArgumentParser(
-            description="Delegate request to commit staged changes"
-        )
+        parser = argparse.ArgumentParser(description="Delegate request code to stage changes")
         parser.add_argument(
             "command",
             choices=["stage", "commit", "jupyter"],
             nargs="?",
             default=None,
-            help="Whether to stage or commit changes",
+            help="Whether to stage changes",
         )
         parser.add_argument(
             "-r", "--repository-folder", required=False, help="The repository folder"
         )
-        parser.add_argument(
-            "-m", "--message", required=False, help="The commit message"
-        )
         args, unknown_args = parser.parse_known_args()
 
-        if args.command == "commit":
-            if not args.message:
-                print(f"-m|--message is mandatory")
-                sys.exit(1)
+        if args.command == "stage":
             if not args.repository_folder:
                 print(f"-r|--repository-folder is mandatory")
                 sys.exit(1)
-            if args.message and args.repository_folder:
-                print(f"Sending StagedChangesCommitRequestDelegated to rydnr")
+            else:
+                print(f"Sending ChangeStagingCodeRequestDelegated to rydnr")
                 await app.accept(
-                    StagedChangesCommitRequestDelegated(
-                        args.message, args.repository_folder
-                    )
+                    ChangeStagingCodeRequestDelegated(args.repository_folder)
                 )

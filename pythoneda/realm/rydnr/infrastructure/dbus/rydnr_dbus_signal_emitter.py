@@ -20,9 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType
 from pythoneda.event import Event
-from pythoneda.infrastructure.dbus.dbus_signal_emitter import DbusSignalEmitter
-from pythoneda.shared.artifact_changes.events.staged_changes_commit_requested import StagedChangesCommitRequested
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus.dbus_staged_changes_commit_requested import DbusStagedChangesCommitRequested
+from pythoneda.infrastructure.dbus import DbusSignalEmitter
+from pythoneda.shared.artifact_changes.events import ChangeStagingCodeRequested
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodeRequested
 from typing import Dict
 
 class RydnrDbusSignalEmitter(DbusSignalEmitter):
@@ -38,7 +38,7 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
 
     Collaborators:
         - pythoneda.application.PythonEDA: Requests emitting events.
-        - pythoneda.shared.artifact_changes.events.infrastructure.dbus.dbus_change_staging_requested.DbusCommitStagedChangesRequested
+        - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeRequested
     """
     def __init__(self):
         """
@@ -46,23 +46,14 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
         """
         super().__init__()
 
-    def emitters(self) -> Dict:
+    def signal_emitters(self) -> Dict:
         """
         Retrieves the configured event emitters.
-        :return: A dictionary with the event class name as key, and a dictionary as value. Such dictionary must include the following entries:
-          - "interface": the event interface,
-          - "busType": the bus type,
-          - "transformer": a function capable of transforming the event into a string.
-          - "signature": a function capable of returning the types of the event parameters.
+        :return: For each event, a list with the event interface and the bus type.
         :rtype: Dict
         """
         result = {}
-        key = self.fqdn_key(StagedChangesCommitRequested)
-        result[key] = {
-                "interface": DbusStagedChangesCommitRequested,
-                "busType": BusType.SYSTEM,
-                "transformer": DbusStagedChangesCommitRequested.transform_StagedChangesCommitRequested,
-                "signature": DbusStagedChangesCommitRequested.signature_for_StagedChangesCommitRequested
-            }
+        key = self.fqdn_key(ChangeStagingCodeRequested)
+        result[key] = [ DbusChangeStagingCodeRequested, BusType.SYSTEM ]
 
         return result

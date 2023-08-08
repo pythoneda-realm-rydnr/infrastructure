@@ -19,3 +19,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
+
+# Ugly hack to avoid sorting PYTHONPATH
+from pythoneda.realm.rydnr import Rydnr
