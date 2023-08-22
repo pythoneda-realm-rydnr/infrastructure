@@ -62,7 +62,6 @@ class ChangeStagingCodeRequestDelegatedCli(PrimaryPort):
                 print(f"-r|--repository-folder is mandatory")
                 sys.exit(1)
             else:
-                print(f"Sending ChangeStagingCodeRequestDelegated to rydnr")
-                await app.accept(
-                    ChangeStagingCodeRequestDelegated(args.repository_folder)
-                )
+                event = ChangeStagingCodeRequestDelegated(args.repository_folder)
+                ChangeStagingCodeRequestDelegatedCli.logger().debug(f"Sending {event} to {app}")
+                await app.accept(event)
