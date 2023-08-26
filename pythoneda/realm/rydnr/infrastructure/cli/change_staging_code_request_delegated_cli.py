@@ -19,11 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
-from pythoneda import PrimaryPort
+from pythoneda import BaseObject, PrimaryPort
 from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
 import sys
 
-class ChangeStagingCodeRequestDelegatedCli(PrimaryPort):
+class ChangeStagingCodeRequestDelegatedCli(BaseObject, PrimaryPort):
 
     """
     A PrimaryPort that makes Rydnr request code to perform the staging of some changes.

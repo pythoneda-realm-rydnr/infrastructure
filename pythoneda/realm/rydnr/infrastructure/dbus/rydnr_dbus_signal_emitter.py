@@ -53,7 +53,7 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
         :rtype: Dict
         """
         result = {}
-        key = self.fqdn_key(ChangeStagingCodeRequested)
+        key = self.__class__.full_class_name(ChangeStagingCodeRequested)
         result[key] = [ DbusChangeStagingCodeRequested, BusType.SYSTEM ]
 
         return result

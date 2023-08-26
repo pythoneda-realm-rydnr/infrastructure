@@ -22,6 +22,8 @@ from dbus_next import BusType, Message
 from pythoneda.event import Event
 from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
 from pythoneda.realm.rydnr.events.infrastructure.dbus import DbusChangeStagingCodeRequestDelegated
+from pythoneda.shared.artifact_changes.events import ChangeStagingCodeDescribed
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodeDescribed
 from pythoneda.infrastructure.dbus import DbusSignalListener
 from typing import Dict
 
@@ -38,7 +40,8 @@ class RydnrDbusSignalListener(DbusSignalListener):
 
     Collaborators:
         - pythoneda.application.pythoneda.PythonEDA: Receives relevant domain events.
-        - pythoneda.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeRequestDelegated
+        - pythoneda.realm.rydnr.events.infrastructure.dbus.DbusChangeStagingCodeRequestDelegated
+        - pythoneda.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeDescribed
     """
 
     def __init__(self):
@@ -56,16 +59,12 @@ class RydnrDbusSignalListener(DbusSignalListener):
         :rtype: Dict
         """
         result = {}
-        key = self.fqdn_key(ChangeStagingCodeRequestDelegated)
+        key = self.__class__.full_class_name(ChangeStagingCodeRequestDelegated)
         result[key] = [
             DbusChangeStagingCodeRequestDelegated, BusType.SYSTEM
         ]
+        key = self.__class__.full_class_name(ChangeStagingCodeDescribed)
+        result[key] = [
+            DbusChangeStagingCodeDescribed, BusType.SYSTEM
+        ]
         return result
-
-    def event_package(self):
-        """
-        Retrieves the event package.
-        :return: The package.
-        :rtype: str
-        """
-        return "pythoneda.realm.rydnr.events"
