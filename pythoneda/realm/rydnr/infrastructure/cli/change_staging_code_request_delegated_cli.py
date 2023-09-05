@@ -63,5 +63,5 @@ class ChangeStagingCodeRequestDelegatedCli(BaseObject, PrimaryPort):
                 sys.exit(1)
             else:
                 event = ChangeStagingCodeRequestDelegated(args.repository_folder)
-                ChangeStagingCodeRequestDelegatedCli.logger().debug(f"Sending {event} to {app}")
+                ChangeStagingCodeRequestDelegatedCli.logger().debug(f"Sending {type(event)} to {app}")
                 await app.accept(event)
