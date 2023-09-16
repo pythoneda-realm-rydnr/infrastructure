@@ -22,8 +22,8 @@ from dbus_next import BusType, Message
 from pythoneda.event import Event
 from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
 from pythoneda.realm.rydnr.events.infrastructure.dbus import DbusChangeStagingCodeRequestDelegated
-from pythoneda.shared.artifact_changes.events import ChangeStagingCodeDescribed
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodeDescribed
+from pythoneda.shared.artifact_changes.events import ChangeStagingCodePackaged
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodePackaged
 from pythoneda.infrastructure.dbus import DbusSignalListener
 from typing import Dict
 
@@ -41,7 +41,7 @@ class RydnrDbusSignalListener(DbusSignalListener):
     Collaborators:
         - pythoneda.application.pythoneda.PythonEDA: Receives relevant domain events.
         - pythoneda.realm.rydnr.events.infrastructure.dbus.DbusChangeStagingCodeRequestDelegated
-        - pythoneda.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeDescribed
+        - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodePackaged
     """
 
     def __init__(self):
@@ -63,8 +63,8 @@ class RydnrDbusSignalListener(DbusSignalListener):
         result[key] = [
             DbusChangeStagingCodeRequestDelegated, BusType.SYSTEM
         ]
-        key = self.__class__.full_class_name(ChangeStagingCodeDescribed)
+        key = self.__class__.full_class_name(ChangeStagingCodePackaged)
         result[key] = [
-            DbusChangeStagingCodeDescribed, BusType.SYSTEM
+            DbusChangeStagingCodePackaged, BusType.SYSTEM
         ]
         return result
