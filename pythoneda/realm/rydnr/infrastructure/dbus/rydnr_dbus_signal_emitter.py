@@ -21,8 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from dbus_next import BusType
 from pythoneda.event import Event
 from pythoneda.infrastructure.dbus import DbusSignalEmitter
-from pythoneda.shared.artifact_changes.events import ChangeStagingCodeRequested
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodeRequested
+from pythoneda.shared.artifact_changes.events import ChangeStagingCodeExecutionRequested, ChangeStagingCodeRequested
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodeExecutionRequested, DbusChangeStagingCodeRequested
 from typing import Dict
 
 class RydnrDbusSignalEmitter(DbusSignalEmitter):
@@ -39,6 +39,7 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
     Collaborators:
         - pythoneda.application.PythonEDA: Requests emitting events.
         - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeRequested
+        - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeExecutionRequested
     """
     def __init__(self):
         """
@@ -55,5 +56,7 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
         result = {}
         key = self.__class__.full_class_name(ChangeStagingCodeRequested)
         result[key] = [ DbusChangeStagingCodeRequested, BusType.SYSTEM ]
+        key = self.__class__.full_class_name(ChangeStagingCodeExecutionRequested)
+        result[key] = [ DbusChangeStagingCodeExecutionRequested, BusType.SYSTEM ]
 
         return result
