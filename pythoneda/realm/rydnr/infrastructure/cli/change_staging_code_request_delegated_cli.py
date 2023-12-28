@@ -23,6 +23,7 @@ from pythoneda import BaseObject, PrimaryPort
 from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
 import sys
 
+
 class ChangeStagingCodeRequestDelegatedCli(BaseObject, PrimaryPort):
 
     """

@@ -26,8 +26,8 @@ from pythoneda import PrimaryPort
 from pythoneda.shared.code_requests.jupyter import JupyterCodeRequest
 import shutil
 import subprocess
-import sys
 import tempfile
+
 
 class TestJupyterRequestCli(PrimaryPort):
 
@@ -63,45 +63,66 @@ class TestJupyterRequestCli(PrimaryPort):
         args, unknown_args = parser.parse_known_args()
 
         if args.command == "jupyter":
-            jupyter_code_request = JupyterCodeRequest()
-            with tempfile.TemporaryDirectory() as tempd:
-                task = asyncio.create_task(self.run_flake(tempd))
+            with tempfile.TemporaryDirectory() as temp_dir:
+                task = asyncio.create_task(self.run_flake(temp_dir))
                 await task
 
     async def run_flake(self, tempFolder):
+        result = None
         jupyter_code_request = JupyterCodeRequest()
         jupyter_code_request.append_markdown("## Importing modules")
         jupyter_code_request.append_markdown("Importing pythoneda")
         jupyter_code_request.append_code("from pythoneda.value_object import ValueObject")
         jupyter_code_request.append_markdown("## Running the code")
         jupyter_code_request.append_markdown("Running hello world")
-        jupyter_code_request.append_code("print('Hello, World!')", Dependency("pythoneda-shared-pythoneda-domain", "0.0.1a30", "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a30?dir=domain"))
+        jupyter_code_request.append_code(
+            "print('Hello, World!')",
+            Dependency(
+                "pythoneda-shared-pythoneda-domain",
+                "0.0.1a30",
+                "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a30?dir=domain"))
         # create a flake in a temporary folder
         shutil.copy(Path(os.getcwd()) / ".." / "application" / "flake.nix", Path(tempFolder) / "flake.nix")
-        shutil.copy(Path(os.getcwd()) / ".." / "application" / "pyprojecttoml.template", Path(tempFolder) / "pyprojecttoml.template")
+        shutil.copy(
+            Path(os.getcwd()) / ".." / "application" / "pyprojecttoml.template",
+            Path(tempFolder) / "pyprojecttoml.template")
         try:
-            subprocess.run(["git", "init", "."], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=tempFolder)
+            subprocess.run(
+                ["git", "init", "."],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                cwd=tempFolder)
         except subprocess.CalledProcessError as err:
             print(err.stderr)
         with open(Path(tempFolder) / "code-request.ipynb", "w", encoding="utf-8") as f:
             jupyter_code_request.write(f)
         try:
-            subprocess.run(["git", "add", "flake.nix", "pyprojecttoml.template", "code-request.ipynb"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=tempFolder)
+            subprocess.run(
+                ["git", "add", "flake.nix", "pyprojecttoml.template", "code-request.ipynb"],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                cwd=tempFolder)
         except subprocess.CalledProcessError as err:
             print(err.stderr)
         # run `nix run`
         try:
-            process = await asyncio.create_subprocess_shell("nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tempFolder)
+            result =\
+                await asyncio.create_subprocess_shell(
+                    "nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tempFolder)
+            stdout, stderr = await result.communicate()
+
+            if stdout:
+                print(stdout.decode())
+            if stderr:
+                print(stderr.decode())
+
+            print(f'nix run {tempFolder} finished')
+
         except subprocess.CalledProcessError as err:
             print(err.stderr)
 
-        stdout, stderr = await process.communicate()
-
-        if stdout:
-            print(stdout.decode())
-        if stderr:
-            print(stderr.decode())
-
-        print(f'nix run {tempFolder} finished')
-
-        return process
+        return result

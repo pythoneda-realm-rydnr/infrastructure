@@ -19,11 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType
-from pythoneda.event import Event
 from pythoneda.infrastructure.dbus import DbusSignalEmitter
 from pythoneda.shared.artifact_changes.events import ChangeStagingCodeExecutionRequested, ChangeStagingCodeRequested
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodeExecutionRequested, DbusChangeStagingCodeRequested
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import (
+    DbusChangeStagingCodeExecutionRequested, DbusChangeStagingCodeRequested
+)
 from typing import Dict
+
 
 class RydnrDbusSignalEmitter(DbusSignalEmitter):
 
@@ -55,8 +57,8 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
         """
         result = {}
         key = self.__class__.full_class_name(ChangeStagingCodeRequested)
-        result[key] = [ DbusChangeStagingCodeRequested, BusType.SYSTEM ]
+        result[key] = [DbusChangeStagingCodeRequested, BusType.SYSTEM]
         key = self.__class__.full_class_name(ChangeStagingCodeExecutionRequested)
-        result[key] = [ DbusChangeStagingCodeExecutionRequested, BusType.SYSTEM ]
+        result[key] = [DbusChangeStagingCodeExecutionRequested, BusType.SYSTEM]
 
         return result
