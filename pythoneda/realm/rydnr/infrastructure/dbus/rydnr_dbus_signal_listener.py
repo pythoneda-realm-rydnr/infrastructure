@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/realm/rydnr/infrastructure/dbus/rydnr_dbus_signal_listener.py
 
@@ -20,10 +21,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType, Message
 from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
-from pythoneda.realm.rydnr.events.infrastructure.dbus import DbusChangeStagingCodeRequestDelegated
+from pythoneda.realm.rydnr.events.infrastructure.dbus import (
+    DbusChangeStagingCodeRequestDelegated,
+)
 from pythoneda.shared.artifact_changes.events import ChangeStagingCodePackaged
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import DbusChangeStagingCodePackaged
-from pythoneda.infrastructure.dbus import DbusSignalListener
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import (
+    DbusChangeStagingCodePackaged,
+)
+from pythoneda.shared.infrastructure.dbus import DbusSignalListener
 from typing import Dict
 
 
@@ -39,7 +44,7 @@ class RydnrDbusSignalListener(DbusSignalListener):
         - Listen to signals relevant to Rydnr.
 
     Collaborators:
-        - pythoneda.application.pythoneda.PythonEDA: Receives relevant domain events.
+        - pythoneda.shared.application.PythonEDA: Receives relevant domain events.
         - pythoneda.realm.rydnr.events.infrastructure.dbus.DbusChangeStagingCodeRequestDelegated
         - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodePackaged
         - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusStagedChangesCommitted
@@ -55,21 +60,15 @@ class RydnrDbusSignalListener(DbusSignalListener):
         """
         Retrieves the configured signal receivers.
         :param app: The PythonEDA instance.
-        :type app: pythoneda.application.PythonEDA
+        :type app: pythoneda.shared.application.PythonEDA
         :return: A dictionary with the signal name as key, and the tuple interface and bus type as the value.
         :rtype: Dict
         """
         result = {}
         key = self.__class__.full_class_name(ChangeStagingCodeRequestDelegated)
-        result[key] = [
-            DbusChangeStagingCodeRequestDelegated, BusType.SYSTEM
-        ]
+        result[key] = [DbusChangeStagingCodeRequestDelegated, BusType.SYSTEM]
         key = self.__class__.full_class_name(ChangeStagingCodePackaged)
-        result[key] = [
-            DbusChangeStagingCodePackaged, BusType.SYSTEM
-        ]
+        result[key] = [DbusChangeStagingCodePackaged, BusType.SYSTEM]
         key = self.__class__.full_class_name(StagedChangesCommitted)
-        result[key] = [
-            DbusStagedChangesCommitted, BusType.SYSTEM
-        ]
+        result[key] = [DbusStagedChangesCommitted, BusType.SYSTEM]
         return result

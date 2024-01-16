@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/realm/rydnr/infrastructure/dbus/rydnr_dbus_signal_emitter.py
 
@@ -19,11 +20,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from dbus_next import BusType
-from pythoneda.infrastructure.dbus import DbusSignalEmitter
-from pythoneda.shared.artifact_changes.events import ChangeStagingCodeExecutionRequested, ChangeStagingCodeRequested
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import (
-    DbusChangeStagingCodeExecutionRequested, DbusChangeStagingCodeRequested
+from pythoneda.shared.artifact_changes.events import (
+    ChangeStagingCodeExecutionRequested,
+    ChangeStagingCodeRequested,
 )
+from pythoneda.shared.artifact_changes.events.infrastructure.dbus import (
+    DbusChangeStagingCodeExecutionRequested,
+    DbusChangeStagingCodeRequested,
+)
+from pythoneda.shared.infrastructure.dbus import DbusSignalEmitter
 from typing import Dict
 
 
@@ -39,10 +44,11 @@ class RydnrDbusSignalEmitter(DbusSignalEmitter):
         - Emit domain events as d-bus signals on behalf of Rydnr.
 
     Collaborators:
-        - pythoneda.application.PythonEDA: Requests emitting events.
+        - pythoneda.shared.application.PythonEDA: Requests emitting events.
         - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeRequested
         - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodeExecutionRequested
     """
+
     def __init__(self):
         """
         Creates a new RydnrDbusSignalEmitter instance.

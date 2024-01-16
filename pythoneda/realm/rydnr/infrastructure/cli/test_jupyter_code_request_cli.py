@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/realm/rydnr/infrastructure/cli/test_jupyter_request_cli.py
 
@@ -22,7 +23,7 @@ import argparse
 import asyncio
 import os
 from pathlib import Path
-from pythoneda import PrimaryPort
+from pythoneda.shared import PrimaryPort
 from pythoneda.shared.code_requests.jupyter import JupyterCodeRequest
 import shutil
 import subprocess
@@ -72,7 +73,9 @@ class TestJupyterRequestCli(PrimaryPort):
         jupyter_code_request = JupyterCodeRequest()
         jupyter_code_request.append_markdown("## Importing modules")
         jupyter_code_request.append_markdown("Importing pythoneda")
-        jupyter_code_request.append_code("from pythoneda.value_object import ValueObject")
+        jupyter_code_request.append_code(
+            "from pythoneda.shared.value_object import ValueObject"
+        )
         jupyter_code_request.append_markdown("## Running the code")
         jupyter_code_request.append_markdown("Running hello world")
         jupyter_code_request.append_code(
@@ -80,12 +83,18 @@ class TestJupyterRequestCli(PrimaryPort):
             Dependency(
                 "pythoneda-shared-pythoneda-domain",
                 "0.0.1a30",
-                "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a30?dir=domain"))
+                "github:pythoneda-shared-pythoneda/domain-artifact/0.0.1a30?dir=domain",
+            ),
+        )
         # create a flake in a temporary folder
-        shutil.copy(Path(os.getcwd()) / ".." / "application" / "flake.nix", Path(tempFolder) / "flake.nix")
+        shutil.copy(
+            Path(os.getcwd()) / ".." / "application" / "flake.nix",
+            Path(tempFolder) / "flake.nix",
+        )
         shutil.copy(
             Path(os.getcwd()) / ".." / "application" / "pyprojecttoml.template",
-            Path(tempFolder) / "pyprojecttoml.template")
+            Path(tempFolder) / "pyprojecttoml.template",
+        )
         try:
             subprocess.run(
                 ["git", "init", "."],
@@ -93,26 +102,37 @@ class TestJupyterRequestCli(PrimaryPort):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                cwd=tempFolder)
+                cwd=tempFolder,
+            )
         except subprocess.CalledProcessError as err:
             print(err.stderr)
         with open(Path(tempFolder) / "code-request.ipynb", "w", encoding="utf-8") as f:
             jupyter_code_request.write(f)
         try:
             subprocess.run(
-                ["git", "add", "flake.nix", "pyprojecttoml.template", "code-request.ipynb"],
+                [
+                    "git",
+                    "add",
+                    "flake.nix",
+                    "pyprojecttoml.template",
+                    "code-request.ipynb",
+                ],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                cwd=tempFolder)
+                cwd=tempFolder,
+            )
         except subprocess.CalledProcessError as err:
             print(err.stderr)
         # run `nix run`
         try:
-            result =\
-                await asyncio.create_subprocess_shell(
-                    "nix run .", stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=tempFolder)
+            result = await asyncio.create_subprocess_shell(
+                "nix run .",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                cwd=tempFolder,
+            )
             stdout, stderr = await result.communicate()
 
             if stdout:
@@ -120,7 +140,7 @@ class TestJupyterRequestCli(PrimaryPort):
             if stderr:
                 print(stderr.decode())
 
-            print(f'nix run {tempFolder} finished')
+            print(f"nix run {tempFolder} finished")
 
         except subprocess.CalledProcessError as err:
             print(err.stderr)

@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/realm/rydnr/infrastructure/cli/change_staging_code_request_delegated_cli.py
 
@@ -19,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
-from pythoneda import BaseObject, PrimaryPort
 from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
+from pythoneda.shared import BaseObject, PrimaryPort
 import sys
 
 
@@ -35,7 +36,7 @@ class ChangeStagingCodeRequestDelegatedCli(BaseObject, PrimaryPort):
         - Parse the command-line to retrieve the information needed to request code to stage changes.
 
     Collaborators:
-        - PythonEDA subclasses: They are notified back with the information retrieved from the command line.
+        - pythoneda.shared.application.PythonEDA: It's notified back with the information retrieved from the command line.
         - pythoneda.realm.rydnr.events.change_staging_code_request_delegated.ChangeStagingCodeRequestDelegated
     """
 
@@ -45,7 +46,9 @@ class ChangeStagingCodeRequestDelegatedCli(BaseObject, PrimaryPort):
         :param app: The PythonEDA instance.
         :type app: PythonEDA
         """
-        parser = argparse.ArgumentParser(description="Delegate request code to stage changes")
+        parser = argparse.ArgumentParser(
+            description="Delegate request code to stage changes"
+        )
         parser.add_argument(
             "command",
             choices=["stage", "commit", "jupyter"],
@@ -64,5 +67,7 @@ class ChangeStagingCodeRequestDelegatedCli(BaseObject, PrimaryPort):
                 sys.exit(1)
             else:
                 event = ChangeStagingCodeRequestDelegated(args.repository_folder)
-                ChangeStagingCodeRequestDelegatedCli.logger().debug(f"Sending {type(event)} to {app}")
+                ChangeStagingCodeRequestDelegatedCli.logger().debug(
+                    f"Sending {type(event)} to {app}"
+                )
                 await app.accept(event)
