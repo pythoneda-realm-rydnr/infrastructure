@@ -19,21 +19,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from dbus_next import BusType, Message
-from pythoneda.realm.rydnr.events import ChangeStagingCodeRequestDelegated
-from pythoneda.realm.rydnr.events.infrastructure.dbus import (
-    DbusChangeStagingCodeRequestDelegated,
-)
-from pythoneda.shared.artifact_changes.events import ChangeStagingCodePackaged
-from pythoneda.shared.artifact_changes.events.infrastructure.dbus import (
-    DbusChangeStagingCodePackaged,
-)
 from pythoneda.shared.infrastructure.dbus import DbusSignalListener
-from typing import Dict
+from typing import List
 
 
 class RydnrDbusSignalListener(DbusSignalListener):
-
     """
     A Port that listens to Rydnr-relevant d-bus signals.
 
@@ -45,9 +35,9 @@ class RydnrDbusSignalListener(DbusSignalListener):
 
     Collaborators:
         - pythoneda.shared.application.PythonEDA: Receives relevant domain events.
-        - pythoneda.realm.rydnr.events.infrastructure.dbus.DbusChangeStagingCodeRequestDelegated
-        - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusChangeStagingCodePackaged
-        - pythoneda.shared.artifact_changes.events.infrastructure.dbus.DbusStagedChangesCommitted
+        - pythoneda.realm.rydnr.events.infrastructure.dbus events
+        - pythoneda.shared.artifact.events.code.infrastructure.dbus events
+        - pythoneda.shared.artifact.events.infrastructure.dbus events
     """
 
     def __init__(self):
@@ -56,22 +46,20 @@ class RydnrDbusSignalListener(DbusSignalListener):
         """
         super().__init__()
 
-    def signal_receivers(self, app) -> Dict:
+    @classmethod
+    def event_packages(cls) -> List[str]:
         """
-        Retrieves the configured signal receivers.
-        :param app: The PythonEDA instance.
-        :type app: pythoneda.shared.application.PythonEDA
-        :return: A dictionary with the signal name as key, and the tuple interface and bus type as the value.
-        :rtype: Dict
+        Retrieves the packages of the supported events.
+        :return: The packages.
+        :rtype: List[str]
         """
-        result = {}
-        key = self.__class__.full_class_name(ChangeStagingCodeRequestDelegated)
-        result[key] = [DbusChangeStagingCodeRequestDelegated, BusType.SYSTEM]
-        key = self.__class__.full_class_name(ChangeStagingCodePackaged)
-        result[key] = [DbusChangeStagingCodePackaged, BusType.SYSTEM]
-        key = self.__class__.full_class_name(StagedChangesCommitted)
-        result[key] = [DbusStagedChangesCommitted, BusType.SYSTEM]
-        return result
+        return [
+            "pythoneda.realm.rydnr.events.infrastructure.dbus",
+            "pythoneda.shared.artifact.events.code.infrastructure.dbus",
+            "pythoneda.shared.artifact.events.infrastructure.dbus",
+        ]
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python
